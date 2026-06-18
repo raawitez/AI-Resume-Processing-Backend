@@ -9,7 +9,7 @@ _next_id: int = 1
 @router.post("/register", status_code=201)
 def register(user: UserRegister):
     global _next_id
-    if user.email in users:
+    if user.email in _users:
         raise HTTPException(
             status_code=409,
             detail=f"Email {user.email} already registered"

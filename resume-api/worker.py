@@ -63,7 +63,7 @@ def cache_score(resume_id: int, score_data: dict):
 def process_resume(event: dict):
     resume_id = event.get("resume_id")
     file_path = event.get("file_path")
-    user_id = event.get(user_id)
+    user_id = event.get("user_id")
 
     logger.info(f"\n{'-' * 60}")
     logger.info(f"[WORKER] Processing resume {resume_id}")

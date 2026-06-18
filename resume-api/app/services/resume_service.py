@@ -21,8 +21,8 @@ class ResumeService:
     def _get_resume_or_404(self, resume_id: int, user_id: int) -> Resume:
         resume = (
             self.db.query(Resume).filter(
-                Resume.id = resume_id,
-                Resume.user_id = user_id,
+                Resume.id == resume_id,
+                Resume.user_id == user_id,
             ).first()
         )
 

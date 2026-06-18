@@ -12,7 +12,7 @@ def _create_redis_client():
         return redis.from_url(url, decode_responses=True)
     return redis.Redis(
         host=os.getenv("REDIS_HOST", "localhost"),
-        port=int(os.getenv("REDIS_PORT", "6379"))
+        port=int(os.getenv("REDIS_PORT", "6379")),
         db=0,
         decode_responses=True
     )
