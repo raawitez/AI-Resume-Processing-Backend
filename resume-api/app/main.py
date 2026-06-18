@@ -37,7 +37,6 @@ async def lifespan(app: FastAPI):
             "score caching disabled, will use DB directly"
         )
 
-    # Connect RabbitMQ publisher
     publisher.connect()
     if publisher.channel:
         logger.info(" RabbitMQ publisher connected")
@@ -100,7 +99,6 @@ app.include_router(health_router)
 app.include_router(metrics_router)       
 
 
-# ── Root ──────────────────────────────────────────────────
 
 @app.get("/", tags=["Root"])
 def root():
