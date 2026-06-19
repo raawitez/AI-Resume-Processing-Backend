@@ -12,13 +12,16 @@ class Resume(Base):
 
     stored_filename = Column(String(255), nullable=False)
 
-    file_path = Column(String(500), nullable=False)
+    file_path = Column(String(255), nullable=False)
+
+    file_size = Column(Integer, nullable=False)
 
     status = Column(String(20), default="uploaded", nullable=False)
 
     score = Column(Float, nullable=True)
 
-    score_details = Column(Text, nullable=False)
+    score_details = Column(Text, nullable=True)
+    
 
     created_at = Column(DateTime, server_default=func.now())
     updated_at = Column(DateTime, onupdate=func.now())

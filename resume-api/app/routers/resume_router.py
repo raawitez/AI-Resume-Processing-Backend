@@ -35,7 +35,6 @@ async def upload_resume(
     validate_resume_file(file)
 
     content = await read_and_validate_size(file)
-
     stored_filename = generate_safe_filename(file.filename)
     file_path = get_upload_path(stored_filename)
 
