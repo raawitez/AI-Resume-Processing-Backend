@@ -2,6 +2,9 @@ import os
 import uuid
 from fastapi import UploadFile, HTTPException
 
+import io
+from app.core.s3_client import USE_S3, upload_file_to_s3
+
 MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024
 ALLOWED_CONTENT_TYPES = {"application/pdf"}
 ALLOWED_EXTENSIONS = {".pdf"}
@@ -55,3 +58,14 @@ def generate_safe_filename(original_filename: str) -> str:
 def get_upload_path(stored_filename: str, upload_dir: str="uploads")->str:
     os.makedirs(upload_dir, exist_ok=True)
     return os.path.join(upload_dir, stored_filename)
+
+def save_resume_file(content: bytes, stored_filename: str) -> str:
+    if USE_S3:
+        key = f"resumes/{stored_filename}"
+        upload_file_to_s3(content, key)
+        return key
+    else:
+        path = get_upload_path(stored_filename)
+        with open(path,"wb") as f:
+            f.write(content)
+        return path
