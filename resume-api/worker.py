@@ -153,7 +153,8 @@ def on_message(ch, method, properties, body):
             requeue=False
         )
         return
-
+    success = process_resume(event)
+    
     if success:
         ch.basic_ack(delivery_tag=method.delivery_tag)
         logger.info("[WORKER] Message acknowledged ")
