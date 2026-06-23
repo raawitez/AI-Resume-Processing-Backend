@@ -6,6 +6,8 @@ import pika
 from loguru import logger
 from sqlalchemy.orm import Session
 from dotenv import load_dotenv
+from app.core.s3_client import USE_S3, download_file_from_s3
+import tempfile
 
 load_dotenv()
 
@@ -64,7 +66,9 @@ def process_resume(event: dict):
     resume_id = event.get("resume_id")
     file_path = event.get("file_path")
     user_id = event.get("user_id")
-
+    local_path = get_local_file_for_processing(file_path)
+    text = extract_text_from_pdf(local_path)
+    
     logger.info(f"\n{'-' * 60}")
     logger.info(f"[WORKER] Processing resume {resume_id}")
     logger.info(f"[WORKER] File: {file_path} | User: {user_id}")
@@ -217,3 +221,13 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
+def get_local_file_for_processing(file_path: str) -> str:
+    if USE_S3:
+        content = download_file_from_s3(file_path)
+        tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+        tmp.write(content)
+        tmp.close()
+        return tmp.name
+    return file_path
