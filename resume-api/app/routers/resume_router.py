@@ -13,12 +13,12 @@ from app.core.file_validator import (
     validate_resume_file,
     read_and_validate_size,
     generate_safe_filename,
-    get_upload_path
+    save_resume_file  
 )
 
 router = APIRouter(prefix="/resume", tags=["Resume"])
 
-def get_service(db: Session = Depends(get_db))-> ResumeService:
+def get_service(db: Session = Depends(get_db)) -> ResumeService:
     return ResumeService(db)
 
 @router.post(
@@ -35,17 +35,16 @@ async def upload_resume(
     validate_resume_file(file)
 
     content = await read_and_validate_size(file)
+    
     stored_filename = generate_safe_filename(file.filename)
-    file_path = get_upload_path(stored_filename)
-
-    with open(file_path, "wb") as f:
-        f.write(content)
+    
+    file_path = save_resume_file(content, stored_filename)
 
     resume = service.create_resume(
         user_id=current_user["user_id"],
         original_filename=file.filename,
         stored_filename=stored_filename,
-        file_path=file_path,
+        file_path=file_path, 
         file_size=len(content)
     )
 
@@ -61,14 +60,12 @@ async def upload_resume(
     response_model=ResumeStatusResponse,
     summary="Check resume processing status"
 )
-
 def get_status(
-    resume_id:    int,
-    service:      ResumeService = Depends(get_service),
+    resume_id: int,
+    service: ResumeService = Depends(get_service),
     current_user: dict = Depends(get_current_user)
 ):
     return service.get_status(resume_id, current_user["user_id"])
-
 
 @router.get(
     "/{resume_id}/score",
@@ -76,8 +73,8 @@ def get_status(
     summary="Get resume score"
 )
 def get_score(
-    resume_id:    int,
-    service:      ResumeService = Depends(get_service),
+    resume_id: int,
+    service: ResumeService = Depends(get_service),
     current_user: dict = Depends(get_current_user)
 ):
     return service.get_score(resume_id, current_user["user_id"])
